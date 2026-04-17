@@ -174,16 +174,19 @@ audio,video{width:100%;border-radius:12px;max-height:160px;}
 <!-- VIDEO -->
 <div id="s-video" class="screen form-screen">
   <div class="fs-header">
-    <button class="fs-back" onclick="goTo('s-choose')">←</button>
+    <button class="fs-back" onclick="stopVideoAndGoBack()">←</button>
     <span class="fs-title">Mensagem em vídeo</span>
   </div>
   <div class="fs-body">
     <div><label>Seu nome</label><input type="text" id="video-nome" placeholder="Digite seu nome"></div>
     <div class="record-area">
+      <!-- Preview ao vivo da câmera -->
+      <video id="video-live" playsinline muted autoplay style="width:100%;max-height:220px;border-radius:12px;background:#000;display:none;object-fit:cover;"></video>
+      <!-- Preview gravado -->
+      <video id="video-preview" controls playsinline style="display:none;width:100%;max-height:220px;border-radius:12px;"></video>
       <div class="rec-timer" id="video-timer">0:15</div>
       <button class="rec-btn" id="video-rec-btn" onclick="toggleVideoRec()">🎬</button>
       <div class="rec-status" id="video-status">Toque para gravar</div>
-      <video id="video-preview" controls playsinline style="display:none;width:100%;max-height:200px;"></video>
     </div>
     <button class="btn-main" id="video-send-btn" onclick="sendMedia('video')" style="display:none;">✦ Enviar memória</button>
   </div>
@@ -569,38 +572,72 @@ window.toggleAudioRec = async function() {
 };
 
 // VIDEO RECORDING
+let videoStream = null;
+
+window.stopVideoAndGoBack = function() {
+  if (videoStream) { videoStream.getTracks().forEach(t=>t.stop()); videoStream=null; }
+  if (mediaRecorder && mediaRecorder.state!=='inactive') mediaRecorder.stop();
+  clearInterval(videoTimerInterval);
+  const live = document.getElementById('video-live');
+  live.srcObject = null; live.style.display = 'none';
+  document.getElementById('video-rec-btn').classList.remove('recording');
+  document.getElementById('video-rec-btn').textContent = '🎬';
+  document.getElementById('video-status').textContent = 'Toque para gravar';
+  document.getElementById('video-timer').textContent = '0:15';
+  goTo('s-choose');
+};
+
 window.toggleVideoRec = async function() {
+  const liveEl = document.getElementById('video-live');
+  const prevEl = document.getElementById('video-preview');
+
   if (!mediaRecorder || mediaRecorder.state==='inactive') {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-      mediaRecorder = new MediaRecorder(stream);
+      // Parar stream anterior se existir
+      if (videoStream) { videoStream.getTracks().forEach(t=>t.stop()); }
+      
+      videoStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+      
+      // Mostrar preview ao vivo
+      liveEl.srcObject = videoStream;
+      liveEl.style.display = 'block';
+      prevEl.style.display = 'none';
+      document.getElementById('video-send-btn').style.display = 'none';
+
+      mediaRecorder = new MediaRecorder(videoStream);
       videoChunks = [];
       mediaRecorder.ondataavailable = e => videoChunks.push(e.data);
       mediaRecorder.onstop = () => {
         videoBlob = new Blob(videoChunks, {type:'video/webm'});
         const url = URL.createObjectURL(videoBlob);
-        const prev = document.getElementById('video-preview');
-        prev.src = url; prev.style.display = 'block';
+        // Esconder live, mostrar preview gravado
+        liveEl.srcObject = null; liveEl.style.display = 'none';
+        prevEl.src = url; prevEl.style.display = 'block';
         document.getElementById('video-send-btn').style.display = 'block';
-        document.getElementById('video-status').textContent = 'Vídeo pronto!';
+        document.getElementById('video-status').textContent = 'Vídeo pronto! ✓';
+        document.getElementById('video-rec-btn').textContent = '🔄';
+        // Parar stream
+        videoStream.getTracks().forEach(t=>t.stop()); videoStream=null;
       };
       mediaRecorder.start();
       document.getElementById('video-rec-btn').classList.add('recording');
       document.getElementById('video-rec-btn').textContent = '⏹';
-      document.getElementById('video-status').textContent = 'Gravando...';
+      document.getElementById('video-status').textContent = '● Gravando...';
       videoSecs = 15;
       videoTimerInterval = setInterval(() => {
         videoSecs--;
         document.getElementById('video-timer').textContent = `0:${videoSecs.toString().padStart(2,'0')}`;
-        if (videoSecs <= 0) { clearInterval(videoTimerInterval); mediaRecorder.stop(); stream.getTracks().forEach(t=>t.stop()); document.getElementById('video-rec-btn').classList.remove('recording'); document.getElementById('video-rec-btn').textContent='🎬'; }
+        if (videoSecs <= 0) {
+          clearInterval(videoTimerInterval);
+          mediaRecorder.stop();
+          document.getElementById('video-rec-btn').classList.remove('recording');
+        }
       }, 1000);
     } catch(e) { showToast('Câmera não disponível'); }
   } else {
     clearInterval(videoTimerInterval);
     mediaRecorder.stop();
-    mediaRecorder.stream.getTracks().forEach(t=>t.stop());
     document.getElementById('video-rec-btn').classList.remove('recording');
-    document.getElementById('video-rec-btn').textContent = '🎬';
   }
 };
 
