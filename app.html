@@ -414,20 +414,30 @@ function animWelcome(c) {
       if (p.y < -5) { p.y = h+5; p.x = Math.random()*w; }
     });
 
-    // Message stars
+    // Message stars com nome
     messages.forEach((m,i) => {
-      if (!m._x) { m._x = 30+Math.random()*(w-60); m._y = 60+Math.random()*(h-180); m._pulse=Math.random()*Math.PI*2; }
+      if (!m._x) { m._x = 30+Math.random()*(w-60); m._y = 80+Math.random()*(h-240); m._pulse=Math.random()*Math.PI*2; }
       m._pulse += 0.02;
-      const scale = 1+Math.sin(m._pulse)*0.15;
+      const scale = 1+Math.sin(m._pulse)*0.2;
       const mc = m.cor || '#E8C96A';
+      // Estrela pulsante
       ctx.save();
       ctx.translate(m._x, m._y);
       ctx.scale(scale, scale);
       ctx.beginPath();
-      ctx.arc(0,0,4,0,Math.PI*2);
+      ctx.arc(0,0,5,0,Math.PI*2);
       ctx.fillStyle = mc;
-      ctx.shadowColor = mc; ctx.shadowBlur = 10;
+      ctx.shadowColor = mc; ctx.shadowBlur = 14;
       ctx.fill();
+      ctx.restore();
+      // Nome abaixo da estrela
+      ctx.save();
+      ctx.font = '11px Jost, sans-serif';
+      ctx.fillStyle = 'rgba(226,230,240,0.85)';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = 'rgba(0,0,0,0.8)';
+      ctx.shadowBlur = 6;
+      ctx.fillText(m.nome || '', m._x, m._y + 18);
       ctx.restore();
     });
 
