@@ -3,845 +3,394 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — Memórias do Casamento</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, onSnapshot, query, where, serverTimestamp, deleteDoc, doc }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-/* ══════════════════════════════════════
-   FIREBASE — mesma configuração do app
-══════════════════════════════════════ */
-const firebaseConfig = {
-  apiKey:            "AIzaSyCVYVKB4jUVCtPFK9CWkgcuQajgRdGn37I",
-  authDomain:        "ceu-de-estrelas.firebaseapp.com",
-  projectId:         "ceu-de-estrelas",
-  storageBucket:     "ceu-de-estrelas.firebasestorage.app",
-  messagingSenderId: "105586302725",
-  appId:             "1:105586302725:web:6749a0df0d89d8ee63e16c"
-};
-
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
-window._db = db;
-window._fns = { collection, addDoc, getDocs, onSnapshot, query, where, serverTimestamp, deleteDoc, doc };
-window._fbReady = true;
-</script>
-
+<title>Admin — Céu Estrelado</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --night:#05080F;--deep:#0B1020;--card:#0E1628;
-  --gold:#E8C96A;--gold2:#C49A3C;
-  --text:#E2E6F0;--muted:#7888A8;
-  --border:rgba(200,216,240,.1);--borderG:rgba(232,201,106,.2);
-  --green:#4CAF50;--red:#f44336;--orange:#FF9800;
+  --bg1:#04070E;--bg2:#080D1A;--card:#0d1525;
+  --accent:#E8C96A;--accent2:#C49A3C;
+  --text:#E2E6F0;--muted:#7888A8;--border:rgba(120,136,168,.2);
 }
-html,body{min-height:100%;background:var(--night);font-family:'Jost',sans-serif;color:var(--text)}
-.page{max-width:900px;margin:0 auto;padding:32px 20px 60px}
-
-/* HEADER */
-.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border)}
-.hdr-left h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:var(--text)}
-.hdr-left p{font-size:12px;color:var(--muted);margin-top:4px}
-.tabs{display:flex;gap:4px;background:rgba(255,255,255,.04);border-radius:10px;padding:4px}
-.tab{font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:9px 18px;border-radius:8px;cursor:pointer;color:var(--muted);background:transparent;border:none;transition:all .2s}
-.tab.active{background:var(--gold);color:var(--night);font-weight:500}
-
-/* PANELS */
-.panel{display:none}
-.panel.active{display:block}
-
-/* STATUS */
-.status-bar{display:flex;align-items:center;gap:10px;background:rgba(232,201,106,.05);border:1px solid var(--borderG);border-radius:12px;padding:14px 18px;margin-bottom:24px}
-.sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.sdot.ok{background:var(--green);box-shadow:0 0 8px rgba(76,175,80,.4)}
-.sdot.err{background:var(--red)}
-.sdot.load{background:var(--gold2);animation:dp 1s infinite}
-@keyframes dp{0%,100%{opacity:.4}50%{opacity:1}}
-.stxt{font-size:13px;color:var(--text);flex:1}
-.ssub{font-size:11px;color:var(--muted);margin-top:2px}
-
-/* CARDS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}
-.card-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--text);margin-bottom:6px}
-.card-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+body{font-family:'Jost',sans-serif;background:var(--bg1);color:var(--text);min-height:100vh;}
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Playfair Display',serif;font-size:20px;color:var(--accent);}
+.logo span{font-family:'Jost',sans-serif;font-size:12px;color:var(--muted);display:block;letter-spacing:2px;}
+nav{display:flex;gap:4px;}
+.nav-btn{padding:8px 20px;background:transparent;border:1px solid var(--border);border-radius:50px;color:var(--muted);font-size:13px;cursor:pointer;transition:all .2s;}
+.nav-btn.active,.nav-btn:hover{background:rgba(232,201,106,.1);border-color:var(--accent);color:var(--accent);}
+.tab{display:none;padding:24px;max-width:900px;margin:0 auto;}
+.tab.active{display:block;}
 
 /* FORM */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
-.form-group{display:flex;flex-direction:column;gap:6px}
-.form-group.full{grid-column:1/-1}
-label{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
-input[type=text],input[type=date],select{
-  background:rgba(255,255,255,.05);border:1px solid var(--border);
-  border-radius:10px;padding:11px 14px;color:var(--text);
-  font-family:'Jost',sans-serif;font-size:14px;outline:none;
-  transition:border-color .2s;width:100%;
-}
-input:focus,select:focus{border-color:var(--borderG)}
-select option{background:var(--deep);color:var(--text)}
-.slug-preview{font-size:11px;color:var(--muted);margin-top:4px;font-style:italic}
-.slug-preview span{color:var(--gold2)}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:24px;}
+.form-card h2{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:20px;color:var(--accent);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.form-row.full{grid-template-columns:1fr;}
+.field label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:block;}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Jost',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field select option{background:var(--bg2);}
+.field input[type=color]{padding:6px;height:42px;cursor:pointer;}
 
-/* THEME GRID */
-.custom-theme-box{background:rgba(255,255,255,.03);border:1px solid rgba(232,201,106,.18);border-radius:14px;padding:20px;margin-bottom:16px;display:none;flex-direction:column;gap:18px}
-.custom-theme-box.show{display:flex}
-.tipo-opt{font-size:12px;padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
-.tipo-opt:hover{border-color:var(--borderG);color:var(--text)}
-.tipo-opt.sel{background:rgba(232,201,106,.1);border-color:rgba(232,201,106,.4);color:var(--gold)}
-.theme-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
-.theme-opt{border:2px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s}
-.theme-opt:hover{border-color:var(--borderG)}
-.theme-opt.sel{border-color:var(--gold);background:rgba(232,201,106,.06)}
-.theme-opt .t-ico{font-size:24px;margin-bottom:6px}
-.theme-opt .t-nm{font-size:12px;color:var(--text)}
-.theme-opt .t-ds{font-size:10px;color:var(--muted);margin-top:2px}
+/* TEMA PERSONALIZADO */
+#custom-fields{display:none;background:rgba(232,201,106,.04);border:1px solid rgba(232,201,106,.15);border-radius:12px;padding:16px;margin-top:12px;}
+#custom-fields.show{display:block;}
+.custom-preview{width:100%;height:60px;border-radius:8px;margin-top:8px;border:1px solid var(--border);}
 
-/* BUTTONS */
-.btn-g{font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:var(--night);background:var(--gold);border:none;border-radius:50px;padding:13px 32px;cursor:pointer;transition:all .2s;box-shadow:0 0 20px rgba(232,201,106,.2)}
-.btn-g:hover{box-shadow:0 0 30px rgba(232,201,106,.35)}
-.btn-g:active{transform:scale(.97)}
-.btn-g:disabled{opacity:.35;cursor:not-allowed;transform:none}
-.btn-o{font-family:'Jost',sans-serif;font-size:11px;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:50px;padding:11px 22px;cursor:pointer;transition:all .2s;margin-left:8px}
-.btn-o:hover{border-color:var(--borderG);color:var(--text)}
-.btn-sm{font-size:10px;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;letter-spacing:.5px}
-.btn-sm:hover{border-color:var(--borderG);color:var(--gold)}
+/* TIPO BADGES */
+.tipos-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.tipo-badge{padding:8px 16px;border:1px solid var(--border);border-radius:50px;cursor:pointer;font-size:13px;transition:all .2s;}
+.tipo-badge.sel{background:rgba(232,201,106,.1);border-color:var(--accent);color:var(--accent);}
+
+/* BTN */
+.btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04070E;border:none;border-radius:50px;font-weight:600;font-size:14px;letter-spacing:1px;cursor:pointer;width:100%;margin-top:8px;}
+.btn-primary:hover{opacity:.9;}
 
 /* EVENTS LIST */
-.events-grid{display:flex;flex-direction:column;gap:12px}
-.event-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:16px;transition:border-color .2s;cursor:pointer}
-.event-card:hover{border-color:var(--borderG)}
-.event-dot{width:44px;height:44px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px}
-.event-info{flex:1;min-width:0}
-.event-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:3px}
-.event-links{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
-.link-badge{font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid rgba(200,216,240,.14);background:rgba(255,255,255,.04);color:var(--muted);text-decoration:none;letter-spacing:.3px;transition:all .2s;cursor:pointer;white-space:nowrap}
-.link-badge:hover{border-color:rgba(232,201,106,.4);color:var(--gold)}
-.link-badge.gold{border-color:rgba(232,201,106,.25);color:var(--gold2);background:rgba(232,201,106,.05)}
-.event-meta{font-size:11px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap}
-.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;background:rgba(232,201,106,.1);color:var(--gold2);border:1px solid rgba(232,201,106,.2)}
-.event-actions{display:flex;gap:8px;flex-shrink:0}
+.events-grid{display:grid;gap:16px;}
+.event-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;}
+.ev-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.ev-name{font-family:'Playfair Display',serif;font-size:18px;color:var(--accent);}
+.ev-date{font-size:12px;color:var(--muted);}
+.ev-tipo{font-size:11px;color:var(--muted);border:1px solid var(--border);padding:3px 10px;border-radius:50px;}
+.ev-stats{display:flex;gap:16px;}
+.ev-stat{font-size:13px;color:var(--muted);} .ev-stat strong{color:var(--text);}
+.ev-links{display:flex;flex-wrap:wrap;gap:8px;}
+.ev-link-btn{padding:8px 14px;border-radius:50px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;border:1px solid var(--border);background:transparent;color:var(--text);transition:all .2s;}
+.ev-link-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ev-link-btn.danger:hover{border-color:#dc3232;color:#dc3232;}
+.ev-actions{display:flex;flex-wrap:wrap;gap:8px;}
 
-/* QR CODE */
-.qr-wrap{background:white;border-radius:16px;padding:16px;display:inline-flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
-.qr-label{font-size:12px;color:#333;font-family:'Jost',sans-serif;letter-spacing:.5px}
+/* MODAL */
+#modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(4,7,14,.95);overflow-y:auto;padding:20px;}
+#modal.show{display:block;}
+.modal-inner{max-width:600px;margin:0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.modal-close{background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;}
+.msg-item{padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;}
+.msg-name{font-family:'Playfair Display',serif;font-size:15px;color:var(--accent);}
+.msg-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.msg-media{margin-top:10px;}
+.msg-media audio,.msg-media video{width:100%;border-radius:8px;}
+.msg-media img{width:100%;border-radius:8px;max-height:200px;object-fit:cover;}
+.badge{display:inline-block;padding:2px 10px;border-radius:50px;font-size:11px;margin-left:8px;}
+.badge-audio{background:rgba(120,180,220,.15);color:#7ab8dc;}
+.badge-video{background:rgba(180,120,220,.15);color:#b478dc;}
+.badge-foto{background:rgba(120,220,120,.15);color:#78dc78;}
+.badge-texto{background:rgba(220,200,120,.15);color:#dcc878;}
 
-/* MESSAGES */
-.msg-list{display:flex;flex-direction:column;gap:9px}
-.msg-card{background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px}
-.msg-star{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.msg-info{flex:1;min-width:0}
-.msg-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
-.msg-meta{font-size:10px;color:var(--muted)}
-.msg-btn{width:30px;height:30px;border-radius:50%;border:1px solid rgba(232,201,106,.2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.msg-btn:active{background:rgba(232,201,106,.1)}
-.empty{font-size:13px;color:var(--muted);text-align:center;padding:30px;font-style:italic}
+/* QR */
+#qr-container{text-align:center;padding:16px 0;}
+#qr-container img{max-width:180px;border-radius:12px;border:4px solid var(--accent);}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:20px}
-.stat{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
-.stat-n{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);margin-bottom:2px}
-.stat-l{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
-
-/* DETAIL MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(5,8,15,.88);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.show{display:flex}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
-.modal-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);margin-bottom:20px}
+/* CONFIG */
+.config-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;}
+.config-card h3{font-size:15px;color:var(--accent);margin-bottom:16px;}
 
 /* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:rgba(232,201,106,.15);border:1px solid rgba(232,201,106,.3);border-radius:50px;padding:11px 22px;font-size:13px;color:var(--gold);letter-spacing:.5px;transition:transform .3s;z-index:200;white-space:nowrap}
-.toast.show{transform:translateX(-50%) translateY(0)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(232,201,106,.15);border:1px solid rgba(232,201,106,.4);color:var(--accent);padding:12px 24px;border-radius:50px;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;}
+#toast.show{opacity:1;}
 
-/* APP URL CONFIG */
-.url-config{background:rgba(232,201,106,.04);border:1px solid var(--borderG);border-radius:12px;padding:16px 18px;margin-bottom:20px}
-.url-config label{display:block;font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
-.url-config input{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Jost',sans-serif;font-size:13px;outline:none;width:100%}
-.url-config input:focus{border-color:var(--borderG)}
-.url-config p{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6}
+@media(max-width:600px){.form-row{grid-template-columns:1fr;} nav{gap:2px;} .nav-btn{padding:7px 12px;font-size:12px;}}
 </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- HEADER -->
-  <div class="hdr">
-    <div class="hdr-left">
-      <h1>✦ Painel de Administração</h1>
-      <p>Gerencie eventos e mensagens</p>
-    </div>
-    <div class="tabs">
-      <button class="tab active" onclick="showTab('eventos')">Eventos</button>
-      <button class="tab" onclick="showTab('novo')">+ Novo</button>
-      <button class="tab" onclick="showTab('config')">Config</button>
-    </div>
-  </div>
+<header>
+  <div class="logo">✦ Céu Estrelado <span>JOHN STAR EXPERIENCE</span></div>
+  <nav>
+    <button class="nav-btn active" onclick="showTab('tab-eventos')">Eventos</button>
+    <button class="nav-btn" onclick="showTab('tab-criar')">+ Criar</button>
+    <button class="nav-btn" onclick="showTab('tab-config')">Config</button>
+  </nav>
+</header>
 
-  <!-- STATUS -->
-  <div class="status-bar">
-    <div class="sdot load" id="s-dot"></div>
-    <div>
-      <div class="stxt" id="s-txt">Conectando ao Firebase…</div>
-      <div class="ssub" id="s-sub"></div>
-    </div>
-  </div>
+<!-- TAB EVENTOS -->
+<div id="tab-eventos" class="tab active">
+  <div id="events-list"><p style="color:var(--muted);text-align:center;padding:40px;">Carregando eventos...</p></div>
+</div>
 
-  <!-- ═══ TAB: EVENTOS ═══ -->
-  <div id="tab-eventos" class="panel active">
-    <div class="stats" id="global-stats">
-      <div class="stat"><div class="stat-n" id="gs-events">—</div><div class="stat-l">Eventos</div></div>
-      <div class="stat"><div class="stat-n" id="gs-msgs">—</div><div class="stat-l">Mensagens</div></div>
-      <div class="stat"><div class="stat-n" id="gs-audio">—</div><div class="stat-l">Áudios</div></div>
-      <div class="stat"><div class="stat-n" id="gs-video">—</div><div class="stat-l">Vídeos</div></div>
-    </div>
-    <div class="events-grid" id="events-grid">
-      <div class="empty">Carregando eventos…</div>
-    </div>
-  </div>
-
-  <!-- ═══ TAB: NOVO EVENTO ═══ -->
-  <div id="tab-novo" class="panel">
-    <div class="card">
-      <h2 class="card-title">Criar novo evento</h2>
-      <p class="card-sub">Preencha os dados do casamento. Um link único e QR Code serão gerados automaticamente.</p>
-
-      <!-- Tipo de evento -->
-      <div class="form-group" style="margin-bottom:16px">
-        <label>Tipo de evento</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-          <div class="tipo-opt sel" data-tipo="casamento" onclick="selTipo(this)">💍 Casamento</div>
-          <div class="tipo-opt" data-tipo="aniversario" onclick="selTipo(this)">🎂 Aniversário</div>
-          <div class="tipo-opt" data-tipo="formatura" onclick="selTipo(this)">🎓 Formatura</div>
-          <div class="tipo-opt" data-tipo="corporativo" onclick="selTipo(this)">🏢 Corporativo</div>
-          <div class="tipo-opt" data-tipo="outro" onclick="selTipo(this)">✦ Outro</div>
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label id="lbl-nome1">Nome — Noivo(a) 1</label>
-          <input type="text" id="f-nome1" placeholder="Ana" oninput="updateSlug()"/>
-        </div>
-        <div class="form-group">
-          <label id="lbl-nome2">Nome — Noivo(a) 2</label>
-          <input type="text" id="f-nome2" placeholder="Carlos" oninput="updateSlug()"/>
-        </div>
-        <div class="form-group">
-          <label id="lbl-data">Data do Evento</label>
-          <input type="text" id="f-data" placeholder="19 de março de 2026"/>
-        </div>
-        <div class="form-group">
-          <label>Link do evento (slug)</label>
-          <input type="text" id="f-slug" placeholder="ana-carlos-2026" oninput="onSlugEdit()"/>
-          <p class="slug-preview">URL: <span id="slug-preview-url">…</span></p>
-        </div>
-      </div>
-
-      <div class="form-group" style="margin-bottom:20px">
-        <label>Tema Visual</label>
-        <div class="theme-grid" id="theme-grid">
-          <div class="theme-opt sel" data-theme="estrelas" onclick="selTheme(this)">
-            <div class="t-ico">🌌</div>
-            <div class="t-nm">Céu de Estrelas</div>
-            <div class="t-ds">Noite estrelada</div>
-          </div>
-          <div class="theme-opt" data-theme="jardim" onclick="selTheme(this)">
-            <div class="t-ico">🌸</div>
-            <div class="t-nm">Jardim de Flores</div>
-            <div class="t-ds">Pétalas e verde</div>
-          </div>
-          <div class="theme-opt" data-theme="mar" onclick="selTheme(this)">
-            <div class="t-ico">🌊</div>
-            <div class="t-nm">Mar ao Pôr do Sol</div>
-            <div class="t-ds">Ondas douradas</div>
-          </div>
-          <div class="theme-opt" data-theme="romance" onclick="selTheme(this)">
-            <div class="t-ico">🕯️</div>
-            <div class="t-nm">Romance Clássico</div>
-            <div class="t-ds">Velas e ouro</div>
-          </div>
-          <div class="theme-opt" data-theme="personalizado" onclick="selTheme(this)">
-            <div class="t-ico">🎨</div>
-            <div class="t-nm">Personalizado</div>
-            <div class="t-ds">Cor + imagem + música</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PERSONALIZAÇÃO — aparece só quando tema Personalizado selecionado -->
-      <div class="custom-theme-box" id="custom-theme-box">
-        <p style="font-size:12px;color:var(--gold2);letter-spacing:1px;text-transform:uppercase;margin-bottom:-4px">✦ Personalização</p>
-
-        <div class="form-group">
-          <label>Cor principal</label>
-          <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
-            <div id="color-preview" style="width:36px;height:36px;border-radius:50%;background:#E8C96A;border:2px solid rgba(255,255,255,.2);cursor:pointer;flex-shrink:0;transition:transform .2s" onclick="document.getElementById('f-color').click()"></div>
-            <input type="color" id="f-color" value="#E8C96A" style="display:none" oninput="onColorChange(this.value)"/>
-            <div style="flex:1">
-              <div style="font-size:13px;color:var(--text)" id="color-label">#E8C96A — Dourado padrão</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Cor das estrelas, botões e destaques</div>
-            </div>
-            <button onclick="resetColor()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;letter-spacing:1px;padding:4px 8px">Resetar</button>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Imagem de fundo <span style="color:var(--muted);font-size:10px;font-weight:300">(opcional)</span></label>
-          <div style="border:1px dashed rgba(200,216,240,.2);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .2s" onclick="document.getElementById('f-img').click()" onmouseover="this.style.borderColor='rgba(232,201,106,.4)'" onmouseout="this.style.borderColor='rgba(200,216,240,.2)'">
-            <input type="file" id="f-img" accept="image/*" style="display:none" onchange="onImgChange(event)"/>
-            <span style="font-size:20px">🖼️</span>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="img-name">Clique para selecionar</div>
-              <div style="font-size:10px;color:var(--muted);margin-top:2px">JPG, PNG, WEBP · aparece suave atrás do céu</div>
-            </div>
-            <img id="img-preview" src="" style="width:44px;height:44px;border-radius:8px;object-fit:cover;display:none" alt=""/>
-          </div>
-          <div id="opacity-row" style="display:none;align-items:center;gap:10px;margin-top:8px">
-            <span style="font-size:11px;color:var(--muted)">Opacidade</span>
-            <input type="range" id="f-opacity" min="5" max="40" value="15" style="flex:1;accent-color:var(--gold)" oninput="document.getElementById('opacity-val').textContent=this.value+'%'"/>
-            <span style="font-size:12px;color:var(--muted);width:32px;text-align:right" id="opacity-val">15%</span>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Música de fundo <span style="color:var(--muted);font-size:10px;font-weight:300">(opcional)</span></label>
-          <div style="border:1px dashed rgba(200,216,240,.2);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .2s" onclick="document.getElementById('f-music').click()" onmouseover="this.style.borderColor='rgba(232,201,106,.4)'" onmouseout="this.style.borderColor='rgba(200,216,240,.2)'">
-            <input type="file" id="f-music" accept="audio/*" style="display:none" onchange="onMusicChange(event)"/>
-            <span style="font-size:20px">🎵</span>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="music-name">Clique para selecionar</div>
-              <div style="font-size:10px;color:var(--muted);margin-top:2px">MP3, AAC, WAV · toca em loop com botão mute</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button class="btn-g" id="btn-criar" onclick="criarEvento()">Criar evento</button>
-    </div>
-
-    <!-- QR RESULT -->
-    <div class="card" id="qr-result" style="display:none;text-align:center">
-      <h2 class="card-title">Evento criado! ✦</h2>
-      <p class="card-sub" id="qr-info"></p>
-      <div class="qr-wrap">
-        <div id="qr-code-div"></div>
-        <p class="qr-label" id="qr-label"></p>
-      </div>
-      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px">
-        <button class="btn-g" onclick="downloadQR()">⬇ Baixar QR Code</button>
-        <button class="btn-o" onclick="copyLink()">Copiar link</button>
-      </div>
-      <p style="font-size:12px;color:var(--muted);margin-top:16px;line-height:1.7">
-        Imprima o QR Code e coloque na mesa do evento.<br>
-        Os convidados escaneiam com o celular e enviam a mensagem.
-      </p>
-    </div>
-  </div>
-
-  <!-- ═══ TAB: CONFIG ═══ -->
-  <div id="tab-config" class="panel">
-    <div class="card">
-      <h2 class="card-title">URL do app</h2>
-      <p class="card-sub">Cole aqui a URL onde o app está hospedado (Netlify). Será usada para gerar os QR Codes dos eventos.</p>
-      <div class="url-config">
-        <label>URL base do app (app.html)</label>
-        <input type="text" id="app-url" placeholder="https://meu-app.netlify.app/app.html" oninput="saveAppUrl()"/>
-        <p>Exemplo: se o seu app está em <strong>https://memorias-casamento.netlify.app/app.html</strong>, cole isso aqui.</p>
-      </div>
-      <div class="card-sub" style="margin-bottom:0">
-        <strong style="color:var(--text)">Cloudinary (para mídias)</strong><br>
-        O app usa Cloudinary para salvar áudios, vídeos e fotos gratuitamente (25GB).<br>
-        Crie sua conta em <a href="https://cloudinary.com" target="_blank" style="color:var(--gold2)">cloudinary.com</a> e cole o Cloud Name no arquivo app.html.
+<!-- TAB CRIAR -->
+<div id="tab-criar" class="tab">
+  <div class="form-card">
+    <h2>✦ Criar novo evento</h2>
+    <!-- TIPO -->
+    <div class="field" style="margin-bottom:20px;">
+      <label>Tipo de evento</label>
+      <div class="tipos-grid">
+        <div class="tipo-badge sel" data-tipo="casamento" onclick="selectTipo(this)">💍 Casamento</div>
+        <div class="tipo-badge" data-tipo="aniversario" onclick="selectTipo(this)">🎂 Aniversário</div>
+        <div class="tipo-badge" data-tipo="formatura" onclick="selectTipo(this)">🎓 Formatura</div>
+        <div class="tipo-badge" data-tipo="corporativo" onclick="selectTipo(this)">🏢 Corporativo</div>
+        <div class="tipo-badge" data-tipo="outro" onclick="selectTipo(this)">✦ Outro</div>
       </div>
     </div>
-  </div>
-
-</div><!-- .page -->
-
-<!-- MODAL: VER EVENTO -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <h2 class="modal-title" id="modal-title"></h2>
-      <button onclick="closeModal()" style="background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>
+    <div class="form-row">
+      <div class="field"><label id="nome1-label">Nome 1</label><input type="text" id="nome1" placeholder="Ana"></div>
+      <div class="field"><label id="nome2-label">Nome 2</label><input type="text" id="nome2" placeholder="Carlos"></div>
     </div>
-
-    <div class="stats" id="modal-stats"></div>
-
-    <!-- QR in modal -->
-    <div style="text-align:center;margin-bottom:20px">
-      <div class="qr-wrap" style="margin:0 auto 12px">
-        <div id="modal-qr"></div>
+    <div class="form-row">
+      <div class="field"><label>Data do evento</label><input type="text" id="data-evento" placeholder="19 de março de 2026"></div>
+      <div class="field"><label>Slug (URL)</label><input type="text" id="slug" placeholder="ana-carlos-2026"></div>
+    </div>
+    <!-- TEMA -->
+    <div class="field" style="margin-bottom:16px;">
+      <label>Tema visual</label>
+      <select id="tema" onchange="onTemaChange()">
+        <option value="estrelas">⭐ Céu de Estrelas</option>
+        <option value="jardim">🌸 Jardim de Flores</option>
+        <option value="mar">🌊 Mar ao Pôr do Sol</option>
+        <option value="romance">🕯️ Romance Clássico</option>
+        <option value="personalizado">🎨 Personalizado</option>
+      </select>
+    </div>
+    <!-- CUSTOM FIELDS -->
+    <div id="custom-fields">
+      <div class="form-row">
+        <div class="field"><label>Cor principal</label><input type="color" id="custom-color" value="#E8C96A"></div>
+        <div class="field"><label>Opacidade imagem (0-1)</label><input type="number" id="custom-opacity" value="0.15" min="0" max="1" step="0.05"></div>
       </div>
-      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-        <button class="btn-sm" onclick="copyModalLink()">Copiar link</button>
-        <button class="btn-sm" onclick="downloadModalQR()">Baixar QR</button>
-        <button class="btn-sm" onclick="openApp()">Abrir app</button>
+      <div class="form-row">
+        <div class="field"><label>Imagem de fundo (JPG/PNG)</label><input type="file" id="custom-img-file" accept="image/*" onchange="onCustomImg(event)"></div>
+        <div class="field"><label>Música de fundo (MP3)</label><input type="file" id="custom-music-file" accept="audio/*" onchange="onCustomMusic(event)"></div>
       </div>
+      <canvas id="custom-preview" class="custom-preview"></canvas>
     </div>
-
-    <h3 style="font-size:14px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Mensagens</h3>
-    <div class="msg-list" id="modal-msgs">
-      <div class="empty">Carregando…</div>
-    </div>
-
-    <div style="display:flex;gap:8px;justify-content:center;margin-top:20px;flex-wrap:wrap">
-      <button class="btn-g" id="btn-export-modal" onclick="exportEventCSV()">Exportar CSV</button>
-      <button class="btn-o" onclick="closeModal()">Fechar</button>
-    </div>
+    <button class="btn-primary" onclick="criarEvento()">✦ Criar Evento</button>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<!-- TAB CONFIG -->
+<div id="tab-config" class="tab">
+  <div class="config-card">
+    <h3>URL base do sistema</h3>
+    <div class="field"><label>URL base (sem barra no final)</label><input type="text" id="base-url" placeholder="https://seu-site.vercel.app"></div>
+    <button class="btn-primary" onclick="saveConfig()" style="margin-top:12px;">Salvar</button>
+  </div>
+</div>
 
-<script>
-/* ═══ STATE ═══ */
-let events = [], allMsgs = [], currentEvent = null, appBaseURL = '';
-let selectedTheme = 'estrelas';
-let slugEdited = false;
-let createdEventSlug = '';
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-inner">
+    <div class="modal-header">
+      <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--accent);" id="modal-title">Evento</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
 
-const THEME_ICONS = { estrelas:'🌌', jardim:'🌸', mar:'🌊', romance:'🕯️', personalizado:'🎨' };
-const THEME_NAMES = { estrelas:'Céu de Estrelas', jardim:'Jardim de Flores', mar:'Mar ao Pôr do Sol', romance:'Romance Clássico', personalizado:'Personalizado' };
-const MEDIA_ICONS = { audio:'🎙', video:'🎬', photo:'📷', text:'✍️' };
+<div id="toast"></div>
 
-/* ═══ TABS ═══ */
-function showTab(name) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  event.target.classList.add('active');
-  if (name === 'config') loadConfig();
-}
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* ═══ INIT ═══ */
-window.addEventListener('load', () => {
-  loadConfig();
-
-  const check = setInterval(() => {
-    if (window._fbReady) {
-      clearInterval(check);
-      setStatus('ok', 'Firebase conectado', 'Dados em tempo real');
-      listenEvents();
-      listenMsgs();
-    }
-  }, 200);
-
-  setTimeout(() => {
-    if (!window._fbReady) setStatus('err', 'Firebase não configurado', 'Cole sua config no topo do arquivo');
-  }, 4000);
-
-  updateSlug();
-});
-
-function setStatus(type, txt, sub) {
-  const dot = document.getElementById('s-dot');
-  dot.className = 'sdot ' + (type==='ok'?'ok':type==='err'?'err':'load');
-  document.getElementById('s-txt').textContent = txt;
-  document.getElementById('s-sub').textContent = sub || '';
-}
-
-/* ═══ FIRESTORE LISTENERS ═══ */
-function listenEvents() {
-  const { collection, onSnapshot } = window._fns;
-  onSnapshot(collection(window._db, 'eventos'), snap => {
-    events = snap.docs.map(d => ({ fid: d.id, ...d.data() }));
-    renderEvents();
-  });
-}
-
-function listenMsgs() {
-  const { collection, onSnapshot } = window._fns;
-  onSnapshot(collection(window._db, 'mensagens'), snap => {
-    allMsgs = snap.docs.map(d => ({ fid: d.id, ...d.data() }));
-    updateGlobalStats();
-  });
-}
-
-/* ═══ GLOBAL STATS ═══ */
-function updateGlobalStats() {
-  document.getElementById('gs-events').textContent = events.length;
-  document.getElementById('gs-msgs').textContent = allMsgs.length;
-  document.getElementById('gs-audio').textContent = allMsgs.filter(m => m.midiaTipo === 'audio').length;
-  document.getElementById('gs-video').textContent = allMsgs.filter(m => m.midiaTipo === 'video').length;
-}
-
-/* ═══ RENDER EVENTS ═══ */
-// Label do link dos noivos conforme tipo
-function getParticipantLabel(tipo) {
-  const map = {
-    casamento:   '💑 Link dos Noivos',
-    aniversario: '🎂 Link do Aniversariante',
-    formatura:   '🎓 Link do Formando',
-    corporativo: '🏢 Link da Empresa',
-    outro:       '✦ Link Personalizado',
-  };
-  return map[tipo||'casamento'] || '✦ Link do Evento';
-}
-
-function getBase() {
-  const raw = localStorage.getItem('appBaseURL') || appBaseURL || '';
-  return raw.replace('/app.html','').replace(/\/$/, '') || 'https://astonishing-sunflower-fa4e31.netlify.app';
-}
-
-function renderEvents() {
-  updateGlobalStats();
-  const grid = document.getElementById('events-grid');
-  if (!events.length) { grid.innerHTML = '<div class="empty">Nenhum evento ainda. Crie o primeiro na aba "+ Novo".</div>'; return; }
-
-  grid.innerHTML = '';
-  events.forEach(ev => {
-    const msgs = allMsgs.filter(m => m.eventoSlug === ev.slug);
-    const card = document.createElement('div');
-    card.className = 'event-card';
-    const base = getBase();
-    const appLink = `${base}/app.html?e=${ev.slug}`;
-    const noivosLink = `${base}/noivos.html?e=${ev.slug}`;
-    card.innerHTML = `
-      <div class="event-dot" style="background:rgba(232,201,106,.08)">${THEME_ICONS[ev.tema]||'✦'}</div>
-      <div class="event-info" style="min-width:0;flex:1">
-        <div class="event-title">${ev.nome1}${ev.nome2?' '+(TIPO_LABELS[ev.tipo||'casamento']?.con||' & ')+ev.nome2:''}</div>
-        <div class="event-meta">
-          <span>${ev.data||''}</span>
-          <span class="badge">${THEME_NAMES[ev.tema]||ev.tema}</span>
-          <span>${msgs.length} mensagem${msgs.length!==1?'s':''}</span>
-        </div>
-        <div class="event-links">
-          <a class="link-badge" href="${appLink}" target="_blank" title="${appLink}">📱 Link Convidados</a>
-          <a class="link-badge gold" href="${noivosLink}" target="_blank" title="${noivosLink}">${getParticipantLabel(ev.tipo)}</a>
-          <span class="link-badge" onclick="copyToClip('${appLink}',this)" title="Copiar link convidados">⎘ Copiar</span>
-        </div>
-      </div>
-      <div class="event-actions" style="flex-shrink:0;display:flex;flex-direction:column;gap:6px">
-        <button class="btn-sm" onclick="openEventModal(event,'${ev.slug}')">Ver</button>
-        <button class="btn-sm" onclick="downloadZip(event,'${ev.slug}')" style="border-color:rgba(232,201,106,.3);color:var(--gold2)">⬇ Baixar</button>
-        <button class="btn-sm" onclick="deleteEvent(event,'${ev.slug}','${ev.nome1}')" style="border-color:rgba(244,67,54,.3);color:rgba(244,67,54,.7)">🗑 Excluir</button>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-/* ═══ CREATE EVENT ═══ */
-const TIPO_LABELS = {
-  casamento:   { n1:'Nome — Noivo(a) 1',           n2:'Nome — Noivo(a) 2',        data:'Data do Casamento',   con:' & ',  placeholder1:'Ana',     placeholder2:'Carlos' },
-  aniversario: { n1:'Nome do Aniversariante',       n2:'Segundo nome (opcional)',   data:'Data do Aniversário', con:' — ',  placeholder1:'Maria',   placeholder2:'' },
-  formatura:   { n1:'Nome / Turma',                 n2:'Curso / Instituição',       data:'Data da Formatura',   con:' | ',  placeholder1:'Turma 2026', placeholder2:'Medicina' },
-  corporativo: { n1:'Empresa / Organização',        n2:'Departamento / Evento',     data:'Data do Evento',      con:' · ',  placeholder1:'Empresa',  placeholder2:'Lançamento' },
-  outro:       { n1:'Nome Principal',               n2:'Nome Secundário (opcional)',data:'Data do Evento',      con:' & ',  placeholder1:'Nome',    placeholder2:'' },
+const fbConfig = {
+  apiKey:"AIzaSyCVYVKB4jUVCtPFK9CWkgcuQajgRdGn37I",
+  authDomain:"ceu-de-estrelas.firebaseapp.com",
+  projectId:"ceu-de-estrelas",
+  storageBucket:"ceu-de-estrelas.firebasestorage.app",
+  messagingSenderId:"105586302725",
+  appId:"1:105586302725:web:6749a0df0d89d8ee63e16c"
 };
-let selectedTipo = 'casamento';
+const app = initializeApp(fbConfig);
+const db = getFirestore(app);
 
-function selTipo(el) {
-  document.querySelectorAll('.tipo-opt').forEach(o => o.classList.remove('sel'));
+let eventos = [];
+let tipoSel = 'casamento';
+let customImgData = null, customMusicData = null;
+
+// CONFIG
+const BASE_URL = () => localStorage.getItem('baseUrl') || location.origin;
+document.getElementById('base-url').value = localStorage.getItem('baseUrl') || location.origin;
+window.saveConfig = () => { localStorage.setItem('baseUrl', document.getElementById('base-url').value.trim()); showToast('URL salva!'); };
+
+// TABS
+window.showTab = function(id) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+};
+
+// TIPO
+window.selectTipo = function(el) {
+  document.querySelectorAll('.tipo-badge').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
-  selectedTipo = el.dataset.tipo;
-  const lb = TIPO_LABELS[selectedTipo];
-  document.getElementById('lbl-nome1').textContent = lb.n1;
-  document.getElementById('lbl-nome2').textContent = lb.n2;
-  document.getElementById('lbl-data').textContent = lb.data;
-  document.getElementById('f-nome1').placeholder = lb.placeholder1;
-  document.getElementById('f-nome2').placeholder = lb.placeholder2||'';
-  // dim nome2 for single-name events
-  document.getElementById('f-nome2').style.opacity = (selectedTipo==='aniversario'||selectedTipo==='corporativo') ? '.5' : '1';
-  updateSlug();
-}
+  tipoSel = el.dataset.tipo;
+  const labels = {casamento:['Nome 1','Nome 2'],aniversario:['Aniversariante',''],formatura:['Turma','Curso'],corporativo:['Empresa','Evento'],outro:['Nome 1','Nome 2']};
+  const l = labels[tipoSel];
+  document.getElementById('nome1-label').textContent = l[0];
+  document.getElementById('nome2-label').textContent = l[1] || 'Nome 2';
+  document.getElementById('nome2').placeholder = l[1] || '(opcional)';
+};
 
-function updateSlug() {
-  if (slugEdited) return;
-  const n1 = document.getElementById('f-nome1').value.trim().toLowerCase();
-  const n2 = document.getElementById('f-nome2').value.trim().toLowerCase();
-  const slug = (n1 + '-' + n2).replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-').replace(/^-|-$/g,'');
-  document.getElementById('f-slug').value = slug;
-  updateSlugPreview(slug);
-}
+// TEMA
+window.onTemaChange = function() {
+  const cf = document.getElementById('custom-fields');
+  cf.classList.toggle('show', document.getElementById('tema').value === 'personalizado');
+};
 
-function onSlugEdit() {
-  slugEdited = true;
-  const val = document.getElementById('f-slug').value.toLowerCase().replace(/[^a-z0-9-]/g,'');
-  document.getElementById('f-slug').value = val;
-  updateSlugPreview(val);
-}
-
-function updateSlugPreview(slug) {
-  const base = (localStorage.getItem('appBaseURL')||appBaseURL||'https://astonishing-sunflower-fa4e31.netlify.app/app.html');
-  document.getElementById('slug-preview-url').textContent = slug ? `${base}?e=${slug}` : '…';
-}
-
-function selTheme(el) {
-  document.querySelectorAll('.theme-opt').forEach(o => o.classList.remove('sel'));
-  el.classList.add('sel');
-  selectedTheme = el.dataset.theme;
-  const box = document.getElementById('custom-theme-box');
-  if (selectedTheme === 'personalizado') box.classList.add('show');
-  else box.classList.remove('show');
-}
-
-// ── Custom theme helpers ──
-let customImgB64 = null, customMusicB64 = null, customColor = '#E8C96A';
-
-function onColorChange(val) {
-  customColor = val;
-  document.getElementById('color-preview').style.background = val;
-  document.getElementById('color-label').textContent = val.toUpperCase();
-}
-function resetColor() {
-  customColor = '#E8C96A';
-  document.getElementById('f-color').value = '#E8C96A';
-  document.getElementById('color-preview').style.background = '#E8C96A';
-  document.getElementById('color-label').textContent = '#E8C96A — Dourado padrão';
-}
-function onImgChange(e) {
+// CUSTOM IMG
+window.onCustomImg = function(e) {
   const file = e.target.files[0]; if (!file) return;
-  document.getElementById('img-name').textContent = file.name;
-  document.getElementById('opacity-row').style.display = 'flex';
-  const reader = new FileReader();
-  reader.onload = r => {
-    customImgB64 = r.result;
-    const prev = document.getElementById('img-preview');
-    prev.src = r.result; prev.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-}
-function onMusicChange(e) {
+  const r = new FileReader(); r.onload = ev => { customImgData = ev.target.result; }; r.readAsDataURL(file);
+};
+window.onCustomMusic = function(e) {
   const file = e.target.files[0]; if (!file) return;
-  document.getElementById('music-name').textContent = file.name;
-  const reader = new FileReader();
-  reader.onload = r => { customMusicB64 = r.result; };
-  reader.readAsDataURL(file);
-}
+  const r = new FileReader(); r.onload = ev => { customMusicData = ev.target.result; }; r.readAsDataURL(file);
+};
 
-async function criarEvento() {
-  const nome1 = document.getElementById('f-nome1').value.trim();
-  const nome2 = document.getElementById('f-nome2').value.trim();
-  const data  = document.getElementById('f-data').value.trim();
-  const slug  = document.getElementById('f-slug').value.trim();
+// CRIAR EVENTO
+window.criarEvento = async function() {
+  const nome1 = document.getElementById('nome1').value.trim();
+  const nome2 = document.getElementById('nome2').value.trim();
+  const data = document.getElementById('data-evento').value.trim();
+  const slug = document.getElementById('slug').value.trim().toLowerCase().replace(/\s+/g,'-');
+  const tema = document.getElementById('tema').value;
+  if (!nome1 || !slug) { showToast('Preencha nome e slug'); return; }
 
-  if (!nome1||!nome2||!slug) { showToast('Preencha nome e slug'); return; }
-  if (events.find(e => e.slug === slug)) { showToast('Esse slug já existe'); return; }
-
-  const btn = document.getElementById('btn-criar');
-  btn.disabled = true; btn.textContent = 'Criando…';
-
-  try {
-    const { collection, addDoc, serverTimestamp } = window._fns;
-    await addDoc(collection(window._db, 'eventos'), {
-      nome1, nome2, data, slug,
-      tipo: selectedTipo,
-      tema: selectedTheme,
-      customColor: selectedTheme === 'personalizado' ? customColor : null,
-      customImg: selectedTheme === 'personalizado' ? (customImgB64||null) : null,
-      customImgOpacity: selectedTheme === 'personalizado' ? parseInt(document.getElementById('f-opacity')?.value||15)/100 : null,
-      customMusic: selectedTheme === 'personalizado' ? (customMusicB64||null) : null,
-      criadoEm: serverTimestamp()
-    });
-    createdEventSlug = slug;
-    showQRResult(nome1, nome2, slug);
-    showToast('Evento criado!');
-    slugEdited = false;
-    document.getElementById('f-nome1').value='';
-    document.getElementById('f-nome2').value='';
-    document.getElementById('f-data').value='';
-    document.getElementById('f-slug').value='';
-    updateSlug();
-  } catch(e) {
-    showToast('Erro: ' + e.message);
-  } finally {
-    btn.disabled = false; btn.textContent = 'Criar evento';
+  const ev = { nome1, nome2, data, slug, tema, tipo:tipoSel, criadoEm:serverTimestamp() };
+  if (tema === 'personalizado') {
+    ev.customColor = document.getElementById('custom-color').value;
+    ev.customImgOpacity = parseFloat(document.getElementById('custom-opacity').value);
+    if (customImgData) ev.customImg = customImgData;
+    if (customMusicData) ev.customMusic = customMusicData;
   }
+  try {
+    await addDoc(collection(db,'eventos'), ev);
+    showToast('Evento criado! ✦');
+    await loadEvents();
+    showTab('tab-eventos');
+  } catch(e) { showToast('Erro ao criar evento'); }
+};
+
+// LOAD EVENTS
+async function loadEvents() {
+  const snap = await getDocs(collection(db,'eventos'));
+  eventos = snap.docs.map(d=>({id:d.id,...d.data()}));
+  // Count messages
+  const msgSnap = await getDocs(collection(db,'mensagens'));
+  const allMsgs = msgSnap.docs.map(d=>d.data());
+  renderEvents(eventos, allMsgs);
 }
 
-function showQRResult(nome1, nome2, slug) {
-  const base = (localStorage.getItem('appBaseURL')||appBaseURL||'https://astonishing-sunflower-fa4e31.netlify.app/app.html');
-  const url = base.replace('/app.html','')+'/' + 'app.html?e='+slug;
-  const _qcon = TIPO_LABELS[selectedTipo]?.con||' & ';
-  document.getElementById('qr-info').textContent = nome1 + (nome2?_qcon+nome2:'') + ' · ' + url;
-  document.getElementById('qr-label').textContent = slug;
-  document.getElementById('qr-code-div').innerHTML = '';
-  new QRCode(document.getElementById('qr-code-div'), { text: url, width: 180, height: 180, colorDark:'#000', colorLight:'#fff' });
-  document.getElementById('qr-result').style.display = 'block';
-  document.getElementById('qr-result').scrollIntoView({ behavior:'smooth' });
-}
-
-function downloadQR() {
-  const canvas = document.querySelector('#qr-code-div canvas');
-  if (!canvas) return;
-  const a = document.createElement('a');
-  a.href = canvas.toDataURL('image/png');
-  a.download = `qrcode-${createdEventSlug}.png`;
-  a.click();
-}
-
-function copyLink() {
-  const base = (localStorage.getItem('appBaseURL')||appBaseURL||'https://astonishing-sunflower-fa4e31.netlify.app/app.html');
-  navigator.clipboard.writeText(`${base}?e=${createdEventSlug}`);
-  showToast('Link copiado!');
-}
-
-/* ═══ MODAL ═══ */
-function openEventModal(e, slug) {
-  e.stopPropagation();
-  currentEvent = events.find(ev => ev.slug === slug);
-  if (!currentEvent) return;
-
-  const msgs = allMsgs.filter(m => m.eventoSlug === slug);
-  const _con = TIPO_LABELS[currentEvent.tipo||'casamento']?.con||' & ';
-  document.getElementById('modal-title').textContent = currentEvent.nome1 + (currentEvent.nome2 ? _con + currentEvent.nome2 : '');
-
-  // Stats
-  const msEl = document.getElementById('modal-stats');
-  msEl.innerHTML = `
-    <div class="stat"><div class="stat-n">${msgs.length}</div><div class="stat-l">Mensagens</div></div>
-    <div class="stat"><div class="stat-n">${msgs.filter(m=>m.midiaTipo==='audio').length}</div><div class="stat-l">Áudios</div></div>
-    <div class="stat"><div class="stat-n">${msgs.filter(m=>m.midiaTipo==='video').length}</div><div class="stat-l">Vídeos</div></div>
-    <div class="stat"><div class="stat-n">${msgs.filter(m=>m.midiaTipo==='photo').length}</div><div class="stat-l">Fotos</div></div>`;
-
-  // QR
-  const base = (localStorage.getItem('appBaseURL')||appBaseURL||'https://astonishing-sunflower-fa4e31.netlify.app/app.html');
-  const url = base.replace('/app.html','')+'/' + 'app.html?e='+slug;
-  document.getElementById('modal-qr').innerHTML = '';
-  new QRCode(document.getElementById('modal-qr'), { text: url, width: 140, height: 140, colorDark:'#000', colorLight:'#fff' });
-
-  // Messages
-  const mlist = document.getElementById('modal-msgs');
-  if (!msgs.length) { mlist.innerHTML = '<div class="empty">Nenhuma mensagem ainda.</div>'; }
-  else {
-    mlist.innerHTML = '';
-    msgs.forEach(msg => {
-      const c = document.createElement('div'); c.className = 'msg-card';
-      const tipo = msg.midiaTipo || 'none';
-      c.innerHTML = `
-        <div class="msg-star"><svg width="28" height="28" viewBox="0 0 28 28"><polygon points="14,2 17,9 25,9 19,14 21,22 14,17 7,22 9,14 3,9 11,9" fill="${msg.cor||'#E8C96A'}"/></svg></div>
-        <div class="msg-info">
-          <div class="msg-name">${msg.nome||'Convidado'}</div>
-          <div class="msg-meta">${msg.hora||''} · ${MEDIA_ICONS[tipo]||'—'} ${tipo!=='none'?tipo:'sem mídia'}${msg.midiaTexto?` · "${msg.midiaTexto.substring(0,40)}…"`:''}</div>
+function renderEvents(evs, allMsgs) {
+  const container = document.getElementById('events-list');
+  if (!evs.length) { container.innerHTML='<p style="color:var(--muted);text-align:center;padding:40px;">Nenhum evento ainda. Crie o primeiro!</p>'; return; }
+  const conectivos = {casamento:' & ',aniversario:' — ',formatura:' | ',corporativo:' · ',outro:' & '};
+  container.innerHTML = '<div class="events-grid">'+evs.map(ev=>{
+    const con = conectivos[ev.tipo]||' & ';
+    const nome = ev.nome2 ? ev.nome1+con+ev.nome2 : ev.nome1;
+    const msgs = allMsgs.filter(m=>m.eventoSlug===ev.slug);
+    const tipos = {casamento:'💍',aniversario:'🎂',formatura:'🎓',corporativo:'🏢',outro:'✦'};
+    return `<div class="event-card">
+      <div class="ev-top">
+        <div>
+          <div class="ev-name">${nome}</div>
+          <div class="ev-date">${ev.data||''}</div>
         </div>
-        ${msg.midiaURL||msg.midiaTexto?`<button class="msg-btn" onclick="viewMsg('${msg.fid}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${msg.cor||'#E8C96A'}" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>`:''}`;
-      mlist.appendChild(c);
-    });
-  }
+        <div class="ev-tipo">${tipos[ev.tipo]||'✦'} ${ev.tipo}</div>
+      </div>
+      <div class="ev-stats">
+        <div class="ev-stat"><strong>${msgs.length}</strong> mensagens</div>
+        <div class="ev-stat"><strong>${ev.tema||'estrelas'}</strong> tema</div>
+      </div>
+      <div class="ev-links">
+        <button class="ev-link-btn" onclick="copyLink('${BASE_URL()}/app.html?e=${ev.slug}')">📱 Convidados</button>
+        <button class="ev-link-btn" onclick="copyLink('${BASE_URL()}/noivos.html?e=${ev.slug}')">💑 Noivos/Part.</button>
+        <button class="ev-link-btn" onclick="openModal('${ev.id}','${ev.slug}','${nome.replace(/'/g,"\\'")}')">🔍 Ver detalhes</button>
+        <button class="ev-link-btn danger" onclick="deleteEvent('${ev.id}','${ev.slug}')">🗑 Excluir</button>
+      </div>
+    </div>`;
+  }).join('')+'</div>';
+}
 
+window.copyLink = function(url) {
+  navigator.clipboard.writeText(url).then(()=>showToast('Link copiado!')).catch(()=>showToast(url));
+};
+
+// MODAL
+window.openModal = async function(evId, slug, nome) {
+  document.getElementById('modal-title').textContent = nome;
+  document.getElementById('modal-body').innerHTML = '<p style="color:var(--muted);">Carregando...</p>';
   document.getElementById('modal').classList.add('show');
-}
 
-function closeModal() { document.getElementById('modal').classList.remove('show'); }
+  const q = query(collection(db,'mensagens'), where('eventoSlug','==',slug));
+  const snap = await getDocs(q);
+  const msgs = snap.docs.map(d=>({id:d.id,...d.data()}));
 
-function copyModalLink() {
-  const base = (localStorage.getItem('appBaseURL')||appBaseURL||'https://astonishing-sunflower-fa4e31.netlify.app/app.html');
-  navigator.clipboard.writeText(`${base}?e=${currentEvent.slug}`);
-  showToast('Link copiado!');
-}
+  const url = BASE_URL();
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url+'/app.html?e='+slug)}`;
 
-function downloadModalQR() {
-  const canvas = document.querySelector('#modal-qr canvas');
-  if (!canvas) return;
-  const a = document.createElement('a'); a.href = canvas.toDataURL('image/png');
-  a.download = `qrcode-${currentEvent.slug}.png`; a.click();
-}
+  let html = `<div id="qr-container"><img src="${qrUrl}" alt="QR Code"><div style="font-size:12px;color:var(--muted);margin-top:8px;">${url}/app.html?e=${slug}</div></div>`;
+  html += `<div style="display:flex;gap:8px;margin:16px 0;">
+    <button class="ev-link-btn" onclick="exportCSV('${slug}')">⬇ CSV</button>
+    <button class="ev-link-btn" onclick="downloadZip('${slug}')">⬇ ZIP</button>
+  </div>`;
+  html += `<div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--text);margin-bottom:12px;">${msgs.length} mensagem${msgs.length!==1?'s':''}</div>`;
 
-function openApp() {
-  const base = (localStorage.getItem('appBaseURL')||appBaseURL||'https://astonishing-sunflower-fa4e31.netlify.app/app.html');
-  window.open(`${base}?e=${currentEvent.slug}`, '_blank');
-}
+  const badgeClass = {audio:'badge-audio',video:'badge-video',foto:'badge-foto',texto:'badge-texto'};
+  html += msgs.map(m=>{
+    let mediaHtml = '';
+    if (m.midiaTipo==='audio') mediaHtml=`<div class="msg-media"><audio controls src="${m.midiaURL}"></audio></div>`;
+    else if (m.midiaTipo==='video') mediaHtml=`<div class="msg-media"><video controls src="${m.midiaURL}" style="max-height:200px;"></video></div>`;
+    else if (m.midiaTipo==='foto') mediaHtml=`<div class="msg-media"><img src="${m.midiaURL}" style="max-height:200px;object-fit:cover;width:100%;border-radius:8px;"></div>`;
+    else if (m.midiaTipo==='texto') mediaHtml=`<p style="margin-top:8px;font-size:14px;color:var(--text);">${m.midiaTexto||''}</p>`;
+    return `<div class="msg-item">
+      <div class="msg-name">${m.nome||'Anônimo'} <span class="badge ${badgeClass[m.midiaTipo]||''}">${m.midiaTipo}</span></div>
+      <div class="msg-meta">${m.hora||''}</div>
+      ${mediaHtml}
+    </div>`;
+  }).join('');
 
-function viewMsg(fid) {
-  const msg = allMsgs.find(m => m.fid === fid);
-  if (!msg) return;
-  if (msg.midiaTipo === 'text' || msg.midiaTexto) { alert(`Mensagem de ${msg.nome}:\n\n"${msg.midiaTexto}"`); return; }
-  if (msg.midiaURL) window.open(msg.midiaURL, '_blank');
-}
+  document.getElementById('modal-body').innerHTML = html;
+  window._modalMsgs = msgs;
+  window._modalSlug = slug;
+};
 
-/* ═══ EXPORT ═══ */
-function exportEventCSV() {
-  if (!currentEvent) return;
-  const msgs = allMsgs.filter(m => m.eventoSlug === currentEvent.slug);
-  const rows = [['Nome','Tipo','Hora','URL Mídia','Mensagem Texto']];
-  msgs.forEach(m => rows.push([m.nome||'',m.midiaTipo||'nenhuma',m.hora||'',m.midiaURL||'',m.midiaTexto||'']));
-  const blob = new Blob(['\uFEFF'+rows.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = `mensagens-${currentEvent.slug}.csv`; a.click();
-  showToast('CSV exportado!');
-}
+window.closeModal = () => document.getElementById('modal').classList.remove('show');
 
-/* ═══ CONFIG ═══ */
-function loadConfig() {
-  appBaseURL = localStorage.getItem('appBaseURL') || '';
-  document.getElementById('app-url').value = appBaseURL;
-  updateSlugPreview(document.getElementById('f-slug')?.value || '');
-}
+// EXPORT CSV
+window.exportCSV = function(slug) {
+  const msgs = window._modalMsgs || [];
+  const rows = [['Nome','Tipo','URL','Texto','Hora'],...msgs.map(m=>[m.nome,m.midiaTipo,m.midiaURL||'',m.midiaTexto||'',m.hora||''])];
+  const csv = rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=`${slug}-mensagens.csv`; a.click();
+};
 
-function saveAppUrl() {
-  appBaseURL = document.getElementById('app-url').value.trim();
-  localStorage.setItem('appBaseURL', appBaseURL);
-  updateSlugPreview(document.getElementById('f-slug')?.value || '');
-  showToast('URL salva!');
-}
-
-/* ═══ TOAST ═══ */
-function copyToClip(text, el) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = el.textContent;
-    el.textContent = '✓ Copiado!';
-    el.style.color = 'var(--gold)';
-    setTimeout(() => { el.textContent = orig; el.style.color = ''; }, 2000);
-  });
-}
-
-async function deleteEvent(e, slug, nome) {
-  e.stopPropagation();
-  const msgs = allMsgs.filter(m => m.eventoSlug === slug);
-  const total = msgs.length;
-
-  const confirm1 = window.confirm(
-    `Excluir o evento "${nome}"?\n\n` +
-    `Isso vai apagar permanentemente:\n` +
-    `• O evento\n` +
-    `• ${total} mensagem${total!==1?'s':''} de convidados\n\n` +
-    `Esta ação não pode ser desfeita.`
-  );
-  if (!confirm1) return;
-
-  if (total > 0) {
-    const confirm2 = window.confirm(
-      `⚠️ Confirmação final\n\nVocê tem certeza? As ${total} mensagem${total!==1?'s':''} serão perdidas para sempre.`
-    );
-    if (!confirm2) return;
-  }
-
-  showToast('Excluindo...');
-
+// DELETE EVENT
+window.deleteEvent = async function(evId, slug) {
+  if (!confirm(`Excluir o evento "${slug}" e todas as suas mensagens?`)) return;
   try {
-    const { collection, query, where, getDocs, deleteDoc, doc } = window._fns;
-    const db = window._db;
+    await deleteDoc(doc(db,'eventos',evId));
+    const q = query(collection(db,'mensagens'), where('eventoSlug','==',slug));
+    const snap = await getDocs(q);
+    for (const d of snap.docs) await deleteDoc(doc(db,'mensagens',d.id));
+    showToast('Evento excluído');
+    await loadEvents();
+  } catch(e) { showToast('Erro ao excluir'); }
+};
 
-    // Delete all messages of this event
-    const mq = query(collection(db, 'mensagens'), where('eventoSlug', '==', slug));
-    const mSnap = await getDocs(mq);
-    const delMsgs = mSnap.docs.map(d => deleteDoc(doc(db, 'mensagens', d.id)));
-    await Promise.all(delMsgs);
-
-    // Delete the event itself
-    const eq = query(collection(db, 'eventos'), where('slug', '==', slug));
-    const eSnap = await getDocs(eq);
-    await Promise.all(eSnap.docs.map(d => deleteDoc(doc(db, 'eventos', d.id))));
-
-    showToast(`✓ Evento "${nome}" excluído — ${total} mensagem${total!==1?'s':''} removida${total!==1?'s':''}`);
-  } catch(err) {
-    showToast('Erro ao excluir: ' + err.message);
-    console.error(err);
-  }
-}
+// DOWNLOAD ZIP (simplified - exports as JSON)
+window.downloadZip = async function(slug) {
+  showToast('Preparando download...');
+  const msgs = window._modalMsgs || [];
+  const data = JSON.stringify(msgs, null, 2);
+  const a = document.createElement('a'); a.href='data:application/json;charset=utf-8,'+encodeURIComponent(data);
+  a.download=`${slug}-memorias.json`; a.click();
+};
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
+
+// INIT
+loadEvents();
 </script>
 </body>
 </html>
