@@ -13,10 +13,36 @@
   --text:#E2E6F0;--muted:#7888A8;--border:rgba(120,136,168,.2);
 }
 body{font-family:'Jost',sans-serif;background:var(--bg1);color:var(--text);min-height:100vh;}
-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--bg1);display:flex;align-items:center;justify-content:center;z-index:100;}
+#login-screen.hide{display:none;}
+.login-box{width:100%;max-width:400px;padding:24px;}
+.login-logo{text-align:center;margin-bottom:32px;}
+.login-logo h1{font-family:'Playfair Display',serif;font-size:28px;color:var(--accent);}
+.login-logo p{font-size:12px;color:var(--muted);letter-spacing:3px;margin-top:4px;}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;}
+.login-card h2{font-family:'Playfair Display',serif;font-size:18px;color:var(--text);margin-bottom:20px;text-align:center;}
+.field{margin-bottom:16px;}
+.field label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:block;}
+.field input{width:100%;padding:13px 16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Jost',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+.field input:focus{border-color:var(--accent);}
+.btn-primary{padding:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04070E;border:none;border-radius:50px;font-weight:600;font-size:14px;letter-spacing:1px;cursor:pointer;width:100%;margin-top:8px;}
+.btn-primary:hover{opacity:.9;}
+.login-error{color:#dc3232;font-size:13px;text-align:center;margin-top:12px;display:none;}
+.login-error.show{display:block;}
+
+/* HEADER */
+#main-app{display:none;}
+#main-app.show{display:block;}
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
 .logo{font-family:'Playfair Display',serif;font-size:20px;color:var(--accent);}
 .logo span{font-family:'Jost',sans-serif;font-size:12px;color:var(--muted);display:block;letter-spacing:2px;}
-nav{display:flex;gap:4px;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.user-badge{font-size:12px;color:var(--muted);background:rgba(255,255,255,.04);padding:6px 14px;border-radius:50px;border:1px solid var(--border);}
+.logout-btn{padding:7px 16px;background:transparent;border:1px solid var(--border);border-radius:50px;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s;}
+.logout-btn:hover{border-color:#dc3232;color:#dc3232;}
+nav{display:flex;gap:4px;flex-wrap:wrap;}
 .nav-btn{padding:8px 20px;background:transparent;border:1px solid var(--border);border-radius:50px;color:var(--muted);font-size:13px;cursor:pointer;transition:all .2s;}
 .nav-btn.active,.nav-btn:hover{background:rgba(232,201,106,.1);border-color:var(--accent);color:var(--accent);}
 .tab{display:none;padding:24px;max-width:900px;margin:0 auto;}
@@ -27,27 +53,18 @@ nav{display:flex;gap:4px;}
 .form-card h2{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:20px;color:var(--accent);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
 .form-row.full{grid-template-columns:1fr;}
-.field label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:block;}
-.field input,.field select,.field textarea{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Jost',sans-serif;font-size:14px;outline:none;transition:border .2s;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
-.field select option{background:var(--bg2);}
-.field input[type=color]{padding:6px;height:42px;cursor:pointer;}
-
-/* TEMA PERSONALIZADO */
+.form-card .field label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:block;}
+.form-card .field input,.form-card .field select{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Jost',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+.form-card .field input:focus,.form-card .field select:focus{border-color:var(--accent);}
+.form-card .field select option{background:var(--bg2);}
+.form-card .field input[type=color]{padding:6px;height:42px;cursor:pointer;}
 #custom-fields{display:none;background:rgba(232,201,106,.04);border:1px solid rgba(232,201,106,.15);border-radius:12px;padding:16px;margin-top:12px;}
 #custom-fields.show{display:block;}
-.custom-preview{width:100%;height:60px;border-radius:8px;margin-top:8px;border:1px solid var(--border);}
-
-/* TIPO BADGES */
 .tipos-grid{display:flex;flex-wrap:wrap;gap:8px;}
 .tipo-badge{padding:8px 16px;border:1px solid var(--border);border-radius:50px;cursor:pointer;font-size:13px;transition:all .2s;}
 .tipo-badge.sel{background:rgba(232,201,106,.1);border-color:var(--accent);color:var(--accent);}
 
-/* BTN */
-.btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04070E;border:none;border-radius:50px;font-weight:600;font-size:14px;letter-spacing:1px;cursor:pointer;width:100%;margin-top:8px;}
-.btn-primary:hover{opacity:.9;}
-
-/* EVENTS LIST */
+/* EVENTS */
 .events-grid{display:grid;gap:16px;}
 .event-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;}
 .ev-top{display:flex;justify-content:space-between;align-items:flex-start;}
@@ -60,7 +77,6 @@ nav{display:flex;gap:4px;}
 .ev-link-btn{padding:8px 14px;border-radius:50px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;border:1px solid var(--border);background:transparent;color:var(--text);transition:all .2s;}
 .ev-link-btn:hover{border-color:var(--accent);color:var(--accent);}
 .ev-link-btn.danger:hover{border-color:#dc3232;color:#dc3232;}
-.ev-actions{display:flex;flex-wrap:wrap;gap:8px;}
 
 /* MODAL */
 #modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(4,7,14,.95);overflow-y:auto;padding:20px;}
@@ -79,14 +95,22 @@ nav{display:flex;gap:4px;}
 .badge-video{background:rgba(180,120,220,.15);color:#b478dc;}
 .badge-foto{background:rgba(120,220,120,.15);color:#78dc78;}
 .badge-texto{background:rgba(220,200,120,.15);color:#dcc878;}
-
-/* QR */
 #qr-container{text-align:center;padding:16px 0;}
 #qr-container img{max-width:180px;border-radius:12px;border:4px solid var(--accent);}
+
+/* USERS */
+.user-item{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;}
+.user-info .user-email{font-size:14px;color:var(--text);}
+.user-info .user-role{font-size:11px;color:var(--muted);margin-top:2px;}
+.user-remove{padding:6px 14px;border:1px solid rgba(220,50,50,.3);border-radius:50px;color:#dc3232;background:transparent;font-size:12px;cursor:pointer;}
+.user-remove:hover{background:rgba(220,50,50,.1);}
+.master-badge{font-size:10px;background:rgba(232,201,106,.15);color:var(--accent);padding:2px 8px;border-radius:50px;border:1px solid rgba(232,201,106,.3);}
 
 /* CONFIG */
 .config-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;}
 .config-card h3{font-size:15px;color:var(--accent);margin-bottom:16px;}
+.config-card .field input{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none;}
+.config-card .field input:focus{border-color:var(--accent);}
 
 /* TOAST */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(232,201,106,.15);border:1px solid rgba(232,201,106,.4);color:var(--accent);padding:12px 24px;border-radius:50px;font-size:13px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;}
@@ -97,14 +121,38 @@ nav{display:flex;gap:4px;}
 </head>
 <body>
 
+<!-- TELA DE LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>✦ Céu Estrelado</h1>
+      <p>JOHN STAR EXPERIENCE</p>
+    </div>
+    <div class="login-card">
+      <h2>Acesso ao Painel</h2>
+      <div class="field"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email"></div>
+      <div class="field"><label>Senha</label><input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn-primary" onclick="doLogin()">Entrar</button>
+      <div class="login-error" id="login-error">E-mail ou senha incorretos.</div>
+    </div>
+  </div>
+</div>
+
+<!-- APP PRINCIPAL (só aparece após login) -->
+<div id="main-app">
 <header>
   <div class="logo">✦ Céu Estrelado <span>JOHN STAR EXPERIENCE</span></div>
-  <nav>
-    <button class="nav-btn active" onclick="showTab('tab-eventos')">Eventos</button>
-    <button class="nav-btn" onclick="showTab('tab-criar')">+ Criar</button>
-    <button class="nav-btn" onclick="showTab('tab-config')">Config</button>
-  </nav>
+  <div class="header-right">
+    <span class="user-badge" id="user-badge">...</span>
+    <button class="logout-btn" onclick="doLogout()">Sair</button>
+  </div>
 </header>
+<nav style="padding:12px 24px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;gap:4px;flex-wrap:wrap;">
+  <button class="nav-btn active" onclick="showTab('tab-eventos',this)">Eventos</button>
+  <button class="nav-btn" onclick="showTab('tab-criar',this)">+ Criar</button>
+  <button class="nav-btn" id="nav-usuarios" style="display:none;" onclick="showTab('tab-usuarios',this)">👥 Usuários</button>
+  <button class="nav-btn" onclick="showTab('tab-config',this)">Config</button>
+</nav>
 
 <!-- TAB EVENTOS -->
 <div id="tab-eventos" class="tab active">
@@ -115,7 +163,6 @@ nav{display:flex;gap:4px;}
 <div id="tab-criar" class="tab">
   <div class="form-card">
     <h2>✦ Criar novo evento</h2>
-    <!-- TIPO -->
     <div class="field" style="margin-bottom:20px;">
       <label>Tipo de evento</label>
       <div class="tipos-grid">
@@ -134,7 +181,6 @@ nav{display:flex;gap:4px;}
       <div class="field"><label>Data do evento</label><input type="text" id="data-evento" placeholder="19 de março de 2026"></div>
       <div class="field"><label>Slug (URL)</label><input type="text" id="slug" placeholder="ana-carlos-2026"></div>
     </div>
-    <!-- TEMA -->
     <div class="field" style="margin-bottom:16px;">
       <label>Tema visual</label>
       <select id="tema" onchange="onTemaChange()">
@@ -145,7 +191,6 @@ nav{display:flex;gap:4px;}
         <option value="personalizado">🎨 Personalizado</option>
       </select>
     </div>
-    <!-- CUSTOM FIELDS -->
     <div id="custom-fields">
       <div class="form-row">
         <div class="field"><label>Cor principal</label><input type="color" id="custom-color" value="#E8C96A"></div>
@@ -155,9 +200,25 @@ nav{display:flex;gap:4px;}
         <div class="field"><label>Imagem de fundo (JPG/PNG)</label><input type="file" id="custom-img-file" accept="image/*" onchange="onCustomImg(event)"></div>
         <div class="field"><label>Música de fundo (MP3)</label><input type="file" id="custom-music-file" accept="audio/*" onchange="onCustomMusic(event)"></div>
       </div>
-      <canvas id="custom-preview" class="custom-preview"></canvas>
     </div>
     <button class="btn-primary" onclick="criarEvento()">✦ Criar Evento</button>
+  </div>
+</div>
+
+<!-- TAB USUÁRIOS (só master) -->
+<div id="tab-usuarios" class="tab">
+  <div class="form-card">
+    <h2>👥 Gerenciar acesso</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Adicione usuários que poderão acessar este painel.</p>
+    <div class="form-row">
+      <div class="field"><label>E-mail do novo usuário</label><input type="email" id="new-user-email" placeholder="colaborador@email.com"></div>
+      <div class="field"><label>Senha inicial</label><input type="text" id="new-user-pass" placeholder="Mínimo 6 caracteres"></div>
+    </div>
+    <button class="btn-primary" onclick="addUser()" style="max-width:200px;">+ Adicionar usuário</button>
+  </div>
+  <div class="form-card">
+    <h2>Usuários com acesso</h2>
+    <div id="users-list"><p style="color:var(--muted);font-size:13px;">Carregando...</p></div>
   </div>
 </div>
 
@@ -165,10 +226,16 @@ nav{display:flex;gap:4px;}
 <div id="tab-config" class="tab">
   <div class="config-card">
     <h3>URL base do sistema</h3>
-    <div class="field"><label>URL base (sem barra no final)</label><input type="text" id="base-url" placeholder="https://seu-site.vercel.app"></div>
-    <button class="btn-primary" onclick="saveConfig()" style="margin-top:12px;">Salvar</button>
+    <div class="field"><label>URL base (sem barra no final)</label><input type="text" id="base-url" placeholder="https://ceu-estrelado.vercel.app"></div>
+    <button class="btn-primary" onclick="saveConfig()" style="max-width:160px;margin-top:12px;">Salvar</button>
+  </div>
+  <div class="config-card" id="change-pass-card">
+    <h3>Alterar minha senha</h3>
+    <div class="field"><label>Nova senha (mín. 6 caracteres)</label><input type="password" id="new-pass" placeholder="••••••••"></div>
+    <button class="btn-primary" onclick="changePassword()" style="max-width:200px;margin-top:12px;">Alterar senha</button>
   </div>
 </div>
+</div><!-- /main-app -->
 
 <!-- MODAL -->
 <div id="modal">
@@ -185,7 +252,8 @@ nav{display:flex;gap:4px;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const fbConfig = {
   apiKey:"AIzaSyCVYVKB4jUVCtPFK9CWkgcuQajgRdGn37I",
@@ -197,25 +265,176 @@ const fbConfig = {
 };
 const app = initializeApp(fbConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+
+// EMAIL DO MASTER (você)
+const MASTER_EMAIL = 'jhonathan.vendas@gmail.com';
 
 let eventos = [];
 let tipoSel = 'casamento';
 let customImgData = null, customMusicData = null;
+let currentUser = null;
+let isMaster = false;
 
-// CONFIG
+// ── AUTH ──────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    // Verificar se usuário tem acesso (master ou na coleção users)
+    const allowed = await checkAccess(user.email);
+    if (!allowed) {
+      await signOut(auth);
+      showLoginError('Seu acesso foi removido.');
+      return;
+    }
+    currentUser = user;
+    isMaster = user.email === MASTER_EMAIL;
+    showApp(user);
+  } else {
+    showLogin();
+  }
+});
+
+async function checkAccess(email) {
+  if (email === MASTER_EMAIL) return true;
+  const snap = await getDocs(query(collection(db,'admin_users'), where('email','==',email)));
+  return !snap.empty;
+}
+
+function showApp(user) {
+  document.getElementById('login-screen').classList.add('hide');
+  document.getElementById('main-app').classList.add('show');
+  document.getElementById('user-badge').textContent = user.email;
+  if (isMaster) {
+    document.getElementById('nav-usuarios').style.display = 'inline-block';
+    loadUsers();
+  }
+  document.getElementById('base-url').value = localStorage.getItem('baseUrl') || location.origin;
+  loadEvents();
+}
+
+function showLogin() {
+  document.getElementById('login-screen').classList.remove('hide');
+  document.getElementById('main-app').classList.remove('show');
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+window.doLogin = async function() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  document.getElementById('login-error').classList.remove('show');
+  if (!email || !pass) { showLoginError('Preencha e-mail e senha.'); return; }
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    showLoginError('E-mail ou senha incorretos.');
+  }
+};
+
+window.doLogout = async function() {
+  await signOut(auth);
+};
+
+// Permitir Enter no login
+document.getElementById('login-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ── USUÁRIOS ──────────────────────────────────────
+async function loadUsers() {
+  const snap = await getDocs(collection(db,'admin_users'));
+  const users = snap.docs.map(d=>({id:d.id,...d.data()}));
+  const list = document.getElementById('users-list');
+  
+  let html = `<div class="user-item">
+    <div class="user-info">
+      <div class="user-email">${MASTER_EMAIL}</div>
+      <div class="user-role">Administrador master</div>
+    </div>
+    <span class="master-badge">✦ MASTER</span>
+  </div>`;
+  
+  html += users.map(u => `
+    <div class="user-item">
+      <div class="user-info">
+        <div class="user-email">${u.email}</div>
+        <div class="user-role">Colaborador</div>
+      </div>
+      <button class="user-remove" onclick="removeUser('${u.id}','${u.email}')">Remover</button>
+    </div>`).join('');
+  
+  if (!users.length) html += '<p style="color:var(--muted);font-size:13px;margin-top:12px;">Nenhum colaborador adicionado ainda.</p>';
+  list.innerHTML = html;
+}
+
+window.addUser = async function() {
+  const email = document.getElementById('new-user-email').value.trim();
+  const pass = document.getElementById('new-user-pass').value.trim();
+  if (!email || !pass) { showToast('Preencha e-mail e senha'); return; }
+  if (pass.length < 6) { showToast('Senha mínimo 6 caracteres'); return; }
+  try {
+    // Criar usuário no Firebase Auth
+    await createUserWithEmailAndPassword(auth, email, pass);
+    // Salvar na coleção admin_users
+    await addDoc(collection(db,'admin_users'), { email, criadoEm: serverTimestamp() });
+    document.getElementById('new-user-email').value = '';
+    document.getElementById('new-user-pass').value = '';
+    showToast('Usuário adicionado! ✦');
+    loadUsers();
+    // Voltar a fazer login com o master
+    await signInWithEmailAndPassword(auth, MASTER_EMAIL, prompt('Confirme sua senha master para continuar:') || '');
+  } catch(e) {
+    if (e.code === 'auth/email-already-in-use') {
+      // Se já existe no Auth, só adiciona no Firestore
+      await addDoc(collection(db,'admin_users'), { email, criadoEm: serverTimestamp() });
+      showToast('Acesso liberado! ✦');
+      loadUsers();
+    } else {
+      showToast('Erro: ' + e.message);
+    }
+  }
+};
+
+window.removeUser = async function(id, email) {
+  if (!confirm(`Remover acesso de ${email}?`)) return;
+  await deleteDoc(doc(db,'admin_users',id));
+  showToast('Acesso removido');
+  loadUsers();
+};
+
+// ── ALTERAR SENHA ─────────────────────────────────
+window.changePassword = async function() {
+  const newPass = document.getElementById('new-pass').value.trim();
+  if (newPass.length < 6) { showToast('Mínimo 6 caracteres'); return; }
+  try {
+    await updatePassword(auth.currentUser, newPass);
+    document.getElementById('new-pass').value = '';
+    showToast('Senha alterada com sucesso! ✦');
+  } catch(e) {
+    showToast('Erro ao alterar senha. Faça login novamente.');
+  }
+};
+
+// ── CONFIG ────────────────────────────────────────
 const BASE_URL = () => localStorage.getItem('baseUrl') || location.origin;
-document.getElementById('base-url').value = localStorage.getItem('baseUrl') || location.origin;
-window.saveConfig = () => { localStorage.setItem('baseUrl', document.getElementById('base-url').value.trim()); showToast('URL salva!'); };
+window.saveConfig = () => {
+  localStorage.setItem('baseUrl', document.getElementById('base-url').value.trim());
+  showToast('URL salva!');
+};
 
-// TABS
-window.showTab = function(id) {
+// ── TABS ──────────────────────────────────────────
+window.showTab = function(id, btn) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  event.currentTarget.classList.add('active');
+  if(btn) btn.classList.add('active');
 };
 
-// TIPO
+// ── TIPO ──────────────────────────────────────────
 window.selectTipo = function(el) {
   document.querySelectorAll('.tipo-badge').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
@@ -223,75 +442,60 @@ window.selectTipo = function(el) {
   const labels = {casamento:['Nome 1','Nome 2'],aniversario:['Aniversariante',''],formatura:['Turma','Curso'],corporativo:['Empresa','Evento'],outro:['Nome 1','Nome 2']};
   const l = labels[tipoSel];
   document.getElementById('nome1-label').textContent = l[0];
-  document.getElementById('nome2-label').textContent = l[1] || 'Nome 2';
-  document.getElementById('nome2').placeholder = l[1] || '(opcional)';
+  document.getElementById('nome2-label').textContent = l[1]||'Nome 2';
+  document.getElementById('nome2').placeholder = l[1]||'(opcional)';
 };
 
-// TEMA
 window.onTemaChange = function() {
-  const cf = document.getElementById('custom-fields');
-  cf.classList.toggle('show', document.getElementById('tema').value === 'personalizado');
+  document.getElementById('custom-fields').classList.toggle('show', document.getElementById('tema').value==='personalizado');
 };
+window.onCustomImg = function(e) { const r=new FileReader(); r.onload=ev=>{customImgData=ev.target.result;}; r.readAsDataURL(e.target.files[0]); };
+window.onCustomMusic = function(e) { const r=new FileReader(); r.onload=ev=>{customMusicData=ev.target.result;}; r.readAsDataURL(e.target.files[0]); };
 
-// CUSTOM IMG
-window.onCustomImg = function(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const r = new FileReader(); r.onload = ev => { customImgData = ev.target.result; }; r.readAsDataURL(file);
-};
-window.onCustomMusic = function(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const r = new FileReader(); r.onload = ev => { customMusicData = ev.target.result; }; r.readAsDataURL(file);
-};
-
-// CRIAR EVENTO
+// ── CRIAR EVENTO ──────────────────────────────────
 window.criarEvento = async function() {
-  const nome1 = document.getElementById('nome1').value.trim();
-  const nome2 = document.getElementById('nome2').value.trim();
-  const data = document.getElementById('data-evento').value.trim();
-  const slug = document.getElementById('slug').value.trim().toLowerCase().replace(/\s+/g,'-');
-  const tema = document.getElementById('tema').value;
-  if (!nome1 || !slug) { showToast('Preencha nome e slug'); return; }
-
-  const ev = { nome1, nome2, data, slug, tema, tipo:tipoSel, criadoEm:serverTimestamp() };
-  if (tema === 'personalizado') {
-    ev.customColor = document.getElementById('custom-color').value;
-    ev.customImgOpacity = parseFloat(document.getElementById('custom-opacity').value);
-    if (customImgData) ev.customImg = customImgData;
-    if (customMusicData) ev.customMusic = customMusicData;
+  const nome1=document.getElementById('nome1').value.trim();
+  const nome2=document.getElementById('nome2').value.trim();
+  const data=document.getElementById('data-evento').value.trim();
+  const slug=document.getElementById('slug').value.trim().toLowerCase().replace(/\s+/g,'-');
+  const tema=document.getElementById('tema').value;
+  if (!nome1||!slug){showToast('Preencha nome e slug');return;}
+  const ev={nome1,nome2,data,slug,tema,tipo:tipoSel,criadoEm:serverTimestamp()};
+  if (tema==='personalizado'){
+    ev.customColor=document.getElementById('custom-color').value;
+    ev.customImgOpacity=parseFloat(document.getElementById('custom-opacity').value);
+    if(customImgData) ev.customImg=customImgData;
+    if(customMusicData) ev.customMusic=customMusicData;
   }
   try {
-    await addDoc(collection(db,'eventos'), ev);
+    await addDoc(collection(db,'eventos'),ev);
     showToast('Evento criado! ✦');
     await loadEvents();
-    showTab('tab-eventos');
-  } catch(e) { showToast('Erro ao criar evento'); }
+    showTab('tab-eventos', document.querySelector('.nav-btn'));
+  } catch(e){showToast('Erro ao criar evento');}
 };
 
-// LOAD EVENTS
+// ── EVENTOS ───────────────────────────────────────
 async function loadEvents() {
-  const snap = await getDocs(collection(db,'eventos'));
-  eventos = snap.docs.map(d=>({id:d.id,...d.data()}));
-  // Count messages
-  const msgSnap = await getDocs(collection(db,'mensagens'));
-  const allMsgs = msgSnap.docs.map(d=>d.data());
-  renderEvents(eventos, allMsgs);
+  const snap=await getDocs(collection(db,'eventos'));
+  eventos=snap.docs.map(d=>({id:d.id,...d.data()}));
+  const msgSnap=await getDocs(collection(db,'mensagens'));
+  const allMsgs=msgSnap.docs.map(d=>d.data());
+  renderEvents(eventos,allMsgs);
 }
 
-function renderEvents(evs, allMsgs) {
-  const container = document.getElementById('events-list');
-  if (!evs.length) { container.innerHTML='<p style="color:var(--muted);text-align:center;padding:40px;">Nenhum evento ainda. Crie o primeiro!</p>'; return; }
-  const conectivos = {casamento:' & ',aniversario:' — ',formatura:' | ',corporativo:' · ',outro:' & '};
-  container.innerHTML = '<div class="events-grid">'+evs.map(ev=>{
-    const con = conectivos[ev.tipo]||' & ';
-    const nome = ev.nome2 ? ev.nome1+con+ev.nome2 : ev.nome1;
-    const msgs = allMsgs.filter(m=>m.eventoSlug===ev.slug);
-    const tipos = {casamento:'💍',aniversario:'🎂',formatura:'🎓',corporativo:'🏢',outro:'✦'};
+function renderEvents(evs,allMsgs) {
+  const container=document.getElementById('events-list');
+  if(!evs.length){container.innerHTML='<p style="color:var(--muted);text-align:center;padding:40px;">Nenhum evento ainda. Crie o primeiro!</p>';return;}
+  const con={casamento:' & ',aniversario:' — ',formatura:' | ',corporativo:' · ',outro:' & '};
+  const tipos={casamento:'💍',aniversario:'🎂',formatura:'🎓',corporativo:'🏢',outro:'✦'};
+  container.innerHTML='<div class="events-grid">'+evs.map(ev=>{
+    const c=con[ev.tipo]||' & ';
+    const nome=ev.nome2?ev.nome1+c+ev.nome2:ev.nome1;
+    const msgs=allMsgs.filter(m=>m.eventoSlug===ev.slug);
     return `<div class="event-card">
       <div class="ev-top">
-        <div>
-          <div class="ev-name">${nome}</div>
-          <div class="ev-date">${ev.data||''}</div>
-        </div>
+        <div><div class="ev-name">${nome}</div><div class="ev-date">${ev.data||''}</div></div>
         <div class="ev-tipo">${tipos[ev.tipo]||'✦'} ${ev.tipo}</div>
       </div>
       <div class="ev-stats">
@@ -299,9 +503,10 @@ function renderEvents(evs, allMsgs) {
         <div class="ev-stat"><strong>${ev.tema||'estrelas'}</strong> tema</div>
       </div>
       <div class="ev-links">
-        <button class="ev-link-btn" onclick="copyLink('${BASE_URL()}/app.html?e=${ev.slug}')">📱 Convidados</button>
-        <button class="ev-link-btn" onclick="copyLink('${BASE_URL()}/noivos.html?e=${ev.slug}')">💑 Noivos/Part.</button>
-        <button class="ev-link-btn" onclick="openModal('${ev.id}','${ev.slug}','${nome.replace(/'/g,"\\'")}')">🔍 Ver detalhes</button>
+        <button class="ev-link-btn" onclick="copyLink('${BASE_URL()}/app.html?e=${ev.slug}')">📱 Copiar link</button>
+        <button class="ev-link-btn" onclick="copyLink('${BASE_URL()}/noivos.html?e=${ev.slug}')">💑 Noivos</button>
+        <button class="ev-link-btn" onclick="window.open('${BASE_URL()}/app.html?e=${ev.slug}','_blank')">↗ Abrir app</button>
+        <button class="ev-link-btn" onclick="openModal('${ev.id}','${ev.slug}','${nome.replace(/'/g,"\\'")}')">🔍 Detalhes</button>
         <button class="ev-link-btn danger" onclick="deleteEvent('${ev.id}','${ev.slug}')">🗑 Excluir</button>
       </div>
     </div>`;
@@ -312,85 +517,59 @@ window.copyLink = function(url) {
   navigator.clipboard.writeText(url).then(()=>showToast('Link copiado!')).catch(()=>showToast(url));
 };
 
-// MODAL
-window.openModal = async function(evId, slug, nome) {
-  document.getElementById('modal-title').textContent = nome;
-  document.getElementById('modal-body').innerHTML = '<p style="color:var(--muted);">Carregando...</p>';
+// ── MODAL ─────────────────────────────────────────
+window.openModal = async function(evId,slug,nome) {
+  document.getElementById('modal-title').textContent=nome;
+  document.getElementById('modal-body').innerHTML='<p style="color:var(--muted);">Carregando...</p>';
   document.getElementById('modal').classList.add('show');
-
-  const q = query(collection(db,'mensagens'), where('eventoSlug','==',slug));
-  const snap = await getDocs(q);
-  const msgs = snap.docs.map(d=>({id:d.id,...d.data()}));
-
-  const url = BASE_URL();
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url+'/app.html?e='+slug)}`;
-
-  let html = `<div id="qr-container"><img src="${qrUrl}" alt="QR Code"><div style="font-size:12px;color:var(--muted);margin-top:8px;">${url}/app.html?e=${slug}</div></div>`;
-  html += `<div style="display:flex;gap:8px;margin:16px 0;">
+  const q=query(collection(db,'mensagens'),where('eventoSlug','==',slug));
+  const snap=await getDocs(q);
+  const msgs=snap.docs.map(d=>({id:d.id,...d.data()}));
+  const url=BASE_URL();
+  const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url+'/app.html?e='+slug)}`;
+  let html=`<div id="qr-container"><img src="${qrUrl}" alt="QR Code"><div style="font-size:12px;color:var(--muted);margin-top:8px;">${url}/app.html?e=${slug}</div></div>`;
+  html+=`<div style="display:flex;gap:8px;margin:16px 0;">
     <button class="ev-link-btn" onclick="exportCSV('${slug}')">⬇ CSV</button>
-    <button class="ev-link-btn" onclick="downloadZip('${slug}')">⬇ ZIP</button>
   </div>`;
-  html += `<div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--text);margin-bottom:12px;">${msgs.length} mensagem${msgs.length!==1?'s':''}</div>`;
-
-  const badgeClass = {audio:'badge-audio',video:'badge-video',foto:'badge-foto',texto:'badge-texto'};
-  html += msgs.map(m=>{
-    let mediaHtml = '';
-    if (m.midiaTipo==='audio') mediaHtml=`<div class="msg-media"><audio controls src="${m.midiaURL}"></audio></div>`;
-    else if (m.midiaTipo==='video') mediaHtml=`<div class="msg-media"><video controls src="${m.midiaURL}" style="max-height:200px;"></video></div>`;
-    else if (m.midiaTipo==='foto') mediaHtml=`<div class="msg-media"><img src="${m.midiaURL}" style="max-height:200px;object-fit:cover;width:100%;border-radius:8px;"></div>`;
-    else if (m.midiaTipo==='texto') mediaHtml=`<p style="margin-top:8px;font-size:14px;color:var(--text);">${m.midiaTexto||''}</p>`;
-    return `<div class="msg-item">
-      <div class="msg-name">${m.nome||'Anônimo'} <span class="badge ${badgeClass[m.midiaTipo]||''}">${m.midiaTipo}</span></div>
-      <div class="msg-meta">${m.hora||''}</div>
-      ${mediaHtml}
-    </div>`;
+  html+=`<div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--text);margin-bottom:12px;">${msgs.length} mensagem${msgs.length!==1?'s':''}</div>`;
+  const bc={audio:'badge-audio',video:'badge-video',foto:'badge-foto',texto:'badge-texto'};
+  html+=msgs.map(m=>{
+    let media='';
+    if(m.midiaTipo==='audio') media=`<div class="msg-media"><audio controls src="${m.midiaURL}"></audio></div>`;
+    else if(m.midiaTipo==='video') media=`<div class="msg-media"><video controls src="${m.midiaURL}" style="max-height:200px;"></video></div>`;
+    else if(m.midiaTipo==='foto') media=`<div class="msg-media"><img src="${m.midiaURL}"></div>`;
+    else if(m.midiaTipo==='texto') media=`<p style="margin-top:8px;font-size:14px;color:var(--text);">${m.midiaTexto||''}</p>`;
+    return `<div class="msg-item"><div class="msg-name">${m.nome||'Anônimo'}<span class="badge ${bc[m.midiaTipo]||''}">${m.midiaTipo}</span></div><div class="msg-meta">${m.hora||''}</div>${media}</div>`;
   }).join('');
-
-  document.getElementById('modal-body').innerHTML = html;
-  window._modalMsgs = msgs;
-  window._modalSlug = slug;
+  document.getElementById('modal-body').innerHTML=html;
+  window._modalMsgs=msgs; window._modalSlug=slug;
 };
+window.closeModal=()=>document.getElementById('modal').classList.remove('show');
 
-window.closeModal = () => document.getElementById('modal').classList.remove('show');
-
-// EXPORT CSV
-window.exportCSV = function(slug) {
-  const msgs = window._modalMsgs || [];
-  const rows = [['Nome','Tipo','URL','Texto','Hora'],...msgs.map(m=>[m.nome,m.midiaTipo,m.midiaURL||'',m.midiaTexto||'',m.hora||''])];
-  const csv = rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
-  const a = document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+window.exportCSV=function(slug){
+  const msgs=window._modalMsgs||[];
+  const rows=[['Nome','Tipo','URL','Texto','Hora'],...msgs.map(m=>[m.nome,m.midiaTipo,m.midiaURL||'',m.midiaTexto||'',m.hora||''])];
+  const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download=`${slug}-mensagens.csv`; a.click();
 };
 
-// DELETE EVENT
-window.deleteEvent = async function(evId, slug) {
-  if (!confirm(`Excluir o evento "${slug}" e todas as suas mensagens?`)) return;
-  try {
+window.deleteEvent=async function(evId,slug){
+  if(!confirm(`Excluir "${slug}" e todas as mensagens?`)) return;
+  try{
     await deleteDoc(doc(db,'eventos',evId));
-    const q = query(collection(db,'mensagens'), where('eventoSlug','==',slug));
-    const snap = await getDocs(q);
-    for (const d of snap.docs) await deleteDoc(doc(db,'mensagens',d.id));
+    const q=query(collection(db,'mensagens'),where('eventoSlug','==',slug));
+    const snap=await getDocs(q);
+    for(const d of snap.docs) await deleteDoc(doc(db,'mensagens',d.id));
     showToast('Evento excluído');
     await loadEvents();
-  } catch(e) { showToast('Erro ao excluir'); }
+  }catch(e){showToast('Erro ao excluir');}
 };
 
-// DOWNLOAD ZIP (simplified - exports as JSON)
-window.downloadZip = async function(slug) {
-  showToast('Preparando download...');
-  const msgs = window._modalMsgs || [];
-  const data = JSON.stringify(msgs, null, 2);
-  const a = document.createElement('a'); a.href='data:application/json;charset=utf-8,'+encodeURIComponent(data);
-  a.download=`${slug}-memorias.json`; a.click();
-};
-
-function showToast(msg) {
+function showToast(msg){
   const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
 }
-
-// INIT
-loadEvents();
 </script>
 </body>
 </html>
