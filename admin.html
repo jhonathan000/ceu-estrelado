@@ -449,8 +449,16 @@ window.selectTipo = function(el) {
 window.onTemaChange = function() {
   document.getElementById('custom-fields').classList.toggle('show', document.getElementById('tema').value==='personalizado');
 };
-window.onCustomImg = function(e) { const r=new FileReader(); r.onload=ev=>{customImgData=ev.target.result;}; r.readAsDataURL(e.target.files[0]); };
-window.onCustomMusic = function(e) { const r=new FileReader(); r.onload=ev=>{customMusicData=ev.target.result;}; r.readAsDataURL(e.target.files[0]); };
+window.onCustomImg = function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  if (file.size > 500*1024) { showToast('Imagem muito grande! Máximo 500KB'); e.target.value=''; return; }
+  const r=new FileReader(); r.onload=ev=>{customImgData=ev.target.result;}; r.readAsDataURL(file);
+};
+window.onCustomMusic = function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  if (file.size > 400*1024) { showToast('Música muito grande! Máximo 400KB'); e.target.value=''; return; }
+  const r=new FileReader(); r.onload=ev=>{customMusicData=ev.target.result;}; r.readAsDataURL(file);
+};
 
 // ── CRIAR EVENTO ──────────────────────────────────
 window.criarEvento = async function() {
@@ -472,7 +480,7 @@ window.criarEvento = async function() {
     showToast('Evento criado! ✦');
     await loadEvents();
     showTab('tab-eventos', document.querySelector('.nav-btn'));
-  } catch(e){showToast('Erro ao criar evento');}
+  } catch(e){ console.error(e); showToast('Erro: ' + (e.message || 'Arquivo muito grande ou sem conexão')); }
 };
 
 // ── EVENTOS ───────────────────────────────────────
