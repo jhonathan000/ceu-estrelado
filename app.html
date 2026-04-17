@@ -722,5 +722,25 @@ function showToast(msg) {
   setTimeout(()=>t.classList.remove('show'), 2800);
 }
 </script>
+<script>
+// Registrar Service Worker para PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registrado:', reg.scope))
+      .catch(err => console.log('SW erro:', err));
+  });
+}
+
+// Capturar evento de instalação do PWA
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Mostrar botão de instalar se quiser
+  const installBtn = document.getElementById('install-btn');
+  if (installBtn) installBtn.style.display = 'block';
+});
+</script>
 </body>
 </html>
